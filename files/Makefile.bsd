@@ -1,4 +1,4 @@
-# $NetBSD: Makefile.in,v 1.1 2013/03/16 07:32:34 agc Exp $
+# $NetBSD: Makefile.bsd,v 1.2 2014/02/04 02:11:18 agc Exp $
 
 PROG=netpgpverify
 
@@ -18,7 +18,7 @@ LDFLAGS+=-g -O0
 .endif
 
 MAN=	netpgpverify.1
-WARNS=	6
+WARNS=	5
 
 .include <bsd.prog.mk>
 
