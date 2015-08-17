@@ -1,4 +1,4 @@
-/*	$NetBSD: md5c.c,v 1.5 2012/03/20 16:21:41 matt Exp $	*/
+/*	$NetBSD: md5c.c,v 1.1 2013/03/16 07:32:34 agc Exp $	*/
 
 /*
  * This file is derived from the RSA Data Security, Inc. MD5 Message-Digest
@@ -29,7 +29,6 @@
  * documentation and/or software.
  */
 
-#include <sys/cdefs.h>
 #include <sys/types.h>
 #include <assert.h>
 #include <string.h>
