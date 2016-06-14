@@ -1,4 +1,4 @@
-# $NetBSD: Makefile.in,v 1.3 2014/03/05 04:51:37 agc Exp $
+# $NetBSD: Makefile.in,v 1.4 2015/08/17 11:37:55 jperkin Exp $
 
 PROG=netpgpverify
 
@@ -43,6 +43,8 @@ tst:
 	rm -f 1keytest.gpg
 	@echo "testing signing with a subkey"
 	./chk.sh -k joyent-pubring.gpg digest-20121220.tgz
+	@echo "testing signatures with no version"
+	./${PROG} -k pubring.gpg noversion.asc
 
 clean:
 	rm -rf *.core ${OBJS} ${PROG}
