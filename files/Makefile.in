@@ -47,6 +47,8 @@ tst:
 	./${PROG} -k pubring.gpg version.asc
 	@echo "testing signatures with no version"
 	./${PROG} -k pubring.gpg noversion.asc
+	@echo "testing dash-escaped text"
+	./${PROG} -k pubring.gpg dash-escaped-text.asc
 
 clean:
 	rm -rf *.core ${OBJS} ${PROG}
