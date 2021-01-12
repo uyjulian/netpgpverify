@@ -28,7 +28,9 @@
 #include <sys/stat.h>
 #include <sys/param.h>
 
+#ifndef _WIN32
 #include <arpa/inet.h>
+#endif
 #include <ctype.h>
 #include <inttypes.h>
 #include <stdarg.h>

@@ -44,7 +44,9 @@
 #ifdef _KERNEL
 # include <sys/kmem.h>
 #else
-# include <arpa/inet.h>
+# ifndef _WIN32
+#  include <arpa/inet.h>
+# endif
 # include <limits.h>
 # include <stdarg.h>
 # include <stdio.h>

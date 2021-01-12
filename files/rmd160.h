@@ -31,6 +31,10 @@
 
 #include <inttypes.h>
 
+#ifdef _WIN32
+typedef uint8_t u_char;
+#endif
+
 #define RMD160_DIGEST_LENGTH		20
 #define RMD160_DIGEST_STRING_LENGTH	41
 

@@ -27,9 +27,13 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/param.h>
+#ifndef _WIN32
 #include <sys/mman.h>
+#endif
 
+#ifndef _WIN32
 #include <arpa/inet.h>
+#endif
 
 #include <inttypes.h>
 #include <limits.h>
@@ -473,8 +477,14 @@ read_file(pgpv_t *pgp, const char *f)
 	}
 	fstat(fileno(mem->fp), &st);
 	mem->size = (size_t)st.st_size;
+#ifndef _WIN32
 	mem->mem = mmap(NULL, mem->size, PROT_READ, MAP_SHARED, fileno(mem->fp), 0);
 	mem->dealloc = UNMAP_MEM;
+#else
+	mem->mem = malloc(mem->size);
+	mem->dealloc = FREE_MEM;
+	fread(mem, mem->size, 1, mem->fp);
+#endif
 	return 1;
 }
 
@@ -487,10 +497,12 @@ closemem(pgpv_mem_t *mem)
 		free(mem->mem);
 		mem->size = 0;
 		break;
+#ifndef _WIN32
 	case UNMAP_MEM:
 		munmap(mem->mem, mem->size);
 		fclose(mem->fp);
 		break;
+#endif
 	}
 	return 1;
 }
@@ -963,7 +975,9 @@ get_32(uint8_t *p)
 static size_t
 fmt_time(obuf_t *obuf, const char *header, int64_t n, const char *trailer, int relative)
 {
+#ifndef _WIN32
 	struct tm	tm;
+#endif
 	time_t		elapsed;
 	time_t		now;
 	time_t		t;
@@ -973,9 +987,15 @@ fmt_time(obuf_t *obuf, const char *header, int64_t n, const char *trailer, int r
 	t = (time_t)n;
 	now = time(NULL);
 	elapsed = now - t;
-	gmtime_r(&t, &tm);            
+#ifndef _WIN32
+	gmtime_r(&t, &tm); 
 	cc = snprintf(newbuf, sizeof(newbuf), "%04d-%02d-%02d",
 		tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
+#else
+	struct tm *tm = gmtime(&t);
+	cc = snprintf(newbuf, sizeof(newbuf), "%04d-%02d-%02d",
+		tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday);
+#endif
 	if (!obuf_add_mem(obuf, header, strlen(header)) ||
 	    !obuf_add_mem(obuf, newbuf, cc)) {
 		return 0;

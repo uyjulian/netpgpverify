@@ -26,7 +26,9 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifndef _WIN32
 #include <sys/mman.h>
+#endif
 
 #include <inttypes.h>
 #include <stdio.h>
@@ -225,14 +227,26 @@ pgpv_digest_file(uint8_t *data, size_t size, const char *name, const uint8_t *ha
 		goto done;
 	}
 	cc = (size_t)(st.st_size);
-	if ((mem = mmap(NULL, cc, PROT_READ, MAP_SHARED, fileno(fp), 0)) == MAP_FAILED) {
+#ifndef _WIN32
+	if ((mem = mmap(NULL, cc, PROT_READ, MAP_SHARED, fileno(fp), 0)) == MAP_FAILED)
+#else
+	if ((mem = malloc(cc)) == NULL)
+#endif
+	{
 		fprintf(stderr, "%s - can't mmap", name);
 		goto done;
 	}
+#ifdef _WIN32
+	fread(mem, cc, 1, fp);
+#endif
 	ret = calcsum(data, size, mem, cc, hashed, hashsize, doarmor);
 done:
 	if (data) {
+#ifndef _WIN32
 		munmap(mem, cc);
+#else
+		free(mem);
+#endif
 	}
 	fclose(fp);
 	return ret;
